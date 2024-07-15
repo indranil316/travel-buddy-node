@@ -2,7 +2,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import * as configs from './configs/env.config.js';
 import mongoose from 'mongoose';
-import authRoutes from './routes/auth.js';
+import vendorAuthRoutes from './routes/vendorAuth.js';
 
 const PORT = configs.default.PORT || 5000;
 
@@ -26,7 +26,7 @@ mongoose
     process.exit();
   });
 
-app.use('/api/auth', authRoutes);
+app.use('/api/auth/vendor', vendorAuthRoutes);
 
 app.get('/', (req, res, next) => {
   res.send('hi');

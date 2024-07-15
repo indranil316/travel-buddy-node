@@ -1,3 +1,5 @@
+import Vendor from '../models/Vendor.js';
+
 export const registerVendor = async (req, res, next) => {
     const { name, email, number, address, licenceName, licenceNumber, selectedServices, selectedSubcategories } = req.body;
 
