@@ -1,7 +1,9 @@
 import Vendor from '../models/Vendor.js';
+import VendorService from '../models/VendorService.js';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import configs from '../configs/env.config.js';
+
 
 export const registerVendor = async (req, res, next) => {
     const { name, email, password, number, address, licenceName, licenceNumber, selectedServices, selectedSubcategories } = req.body;
@@ -52,7 +54,6 @@ export const loginVendor = async (req, res, next) => {
       jwt.sign(
           payload,
           configs.JWT_SECRET,
-          { expiresIn: 3600 },
           (err, token) => {
               if (err) throw err;
               res.json({ token, vendor:payload.vendor });
@@ -63,3 +64,37 @@ export const loginVendor = async (req, res, next) => {
       res.status(500).json({ message: 'Server error' });
   }
 };
+
+export const addService = async (req, res) => {
+    const { name, stars, address, vendorId } = req.body;
+    try {
+      const newService = new VendorService({
+        name,
+        stars,
+        address,
+        vendor: vendorId,
+      });
+  
+      await newService.save();
+      res.status(201).json({ message: 'Service added successfully!' });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Failed to add service. Please try again.', error });
+    }
+};
+
+export const getVendorServices = async (req, res) => {
+    try {
+      const vendorId = req.query.vendorId;
+      const services = await VendorService.find({ vendor: vendorId });
+  
+      if (!services || services.length === 0) {
+        return res.status(404).json({ message: 'No services found for this vendor' });
+      }
+  
+      res.json(services);
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: 'Server error' });
+    }
+  };
